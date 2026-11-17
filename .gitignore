@@ -39,3 +39,15 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Local audit artifacts and private material (review before adding any public PDF)
+/.audit/
+/private/
+/secrets/
+/.aws/
+/.ssh/
+*.key
+*.p12
+*.pfx
+id_rsa*
+id_ed25519*

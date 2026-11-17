@@ -1,36 +1,35 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Shakil Mahmud — Interactive V2 portfolio
 
-## Getting Started
+An original dark portfolio built in the existing Next.js App Router project with TypeScript, Tailwind CSS, Motion, and the supplied public content. The approved reference is in `reference/`; it is not embedded in the app.
 
-First, run the development server:
+## Run locally
 
-```bash
+```text
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open the printed localhost URL. On PowerShell with script execution disabled, use `npm.cmd` and `npx.cmd`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Validate
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```text
+npm run lint
+npx tsc --noEmit
+npm run build
+npm run start
+node scripts/verify-portfolio.mjs
+node scripts/audit-repository.mjs
+```
 
-## Learn More
+The route check defaults to `http://127.0.0.1:3000`; `PORTFOLIO_TEST_URL` selects another local server. If the build uses a canonical domain, pass the same origin as `PORTFOLIO_EXPECT_SITE_URL`. The smoke check does not replace browser, responsive, or screen-reader testing.
 
-To learn more about Next.js, take a look at the following resources:
+## Content and release
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- Public facts: `src/content/portfolio.ts`.
+- Nine case studies: `/projects/[slug]`; six research notes: `/research/[slug]`.
+- All project artwork is explicitly illustrative. The portrait is the supplied public photograph.
+- A résumé download appears only after a reviewed public PDF is supplied and configured.
+- Set `NEXT_PUBLIC_SITE_URL` to the approved HTTP(S) origin before an approved public release. Missing configuration keeps pages non-indexable and omits canonicals and absolute social-image URLs. The social artwork itself is available at `/og`.
+- Read [IMPLEMENTATION_NOTES.md](IMPLEMENTATION_NOTES.md) and [RELEASE_READINESS.md](RELEASE_READINESS.md) for verification results, limitations, and manual checks.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+No push or deployment is authorized until the owner approves it.
