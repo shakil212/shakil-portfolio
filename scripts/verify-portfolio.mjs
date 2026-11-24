@@ -126,6 +126,39 @@ for (const project of projects) {
   assert.ok(html.includes(project.status), `Accurate stage: ${project.slug}`);
   if (project.limitations) assert.ok(html.includes(project.limitations), `Limitations: ${project.slug}`);
 }
+for (const item of research) {
+  const text = documents.get(`/research/${item.slug}`).textContent;
+  assert.ok(text.includes(item.status), `Accurate research stage: ${item.slug}`);
+  assert.ok(text.includes(item.importantQualification), `Research limitations: ${item.slug}`);
+}
+const contact = documents.get("/").querySelector("#contact");
+const socialLinks = contact.querySelectorAll(".contact-social-links a");
+const expectedSocialLinks = [
+  ["Facebook", content.portfolio.contact.facebook],
+  ["Instagram", content.portfolio.contact.instagram],
+  ["YouTube", content.portfolio.contact.youtube],
+  ["LinkedIn", content.portfolio.contact.linkedIn],
+  ["GitHub", content.portfolio.contact.github],
+  ["Email", `mailto:${content.portfolio.contact.email}`],
+];
+assert.equal(socialLinks.length, expectedSocialLinks.length, "Six social anchors");
+assert.equal(new Set(socialLinks.map((link) => link.getAttribute("href"))).size, 6, "No duplicate social links");
+for (const [index, [name, href]] of expectedSocialLinks.entries()) {
+  const link = socialLinks[index];
+  assert.equal(link.getAttribute("href"), href, `${name} destination`);
+  assert.ok(link.getAttribute("aria-label")?.includes(name), `${name} accessible name`);
+  assert.equal(link.textContent.trim(), "", `${name} remains icon-only`);
+  assert.ok(link.querySelector('svg[aria-hidden="true"]'), `${name} decorative icon`);
+  if (href.startsWith("https:")) {
+    assert.equal(link.getAttribute("target"), "_blank");
+    const rel = link.getAttribute("rel").split(/\s+/);
+    assert.ok(rel.includes("noopener") && rel.includes("noreferrer"));
+    assert.equal(contact.querySelectorAll("a").filter((anchor) => anchor.getAttribute("href") === href).length, 1);
+  } else {
+    assert.ok(!link.hasAttribute("target"), "Email uses the default mail handler");
+  }
+}
+assert.equal(contact.querySelector(".email-link").getAttribute("href"), `mailto:${content.portfolio.contact.email}`, "Preserved email CTA");
 assert.ok(home.includes(content.portfolio.contact.email));
 assert.ok(!home.includes("Download résumé"));
 const checkedLinks = new Set();

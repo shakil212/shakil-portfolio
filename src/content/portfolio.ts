@@ -43,6 +43,9 @@ export const portfolio = {
   },
   contact: {
     email: 'shakilmahmud212121@gmail.com',
+    facebook: 'https://www.facebook.com/shakilmahmud2121',
+    instagram: 'https://www.instagram.com/shakil__735/',
+    youtube: 'https://www.youtube.com/@LifeBytesWithShakil',
     linkedIn: 'https://www.linkedin.com/in/shakil-mahmud212',
     github: 'https://github.com/shakil212',
     previousPortfolio: 'https://shakilmahmud-portfolio.vercel.app',

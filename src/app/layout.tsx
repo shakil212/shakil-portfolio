@@ -5,6 +5,7 @@ import { MotionProvider } from "@/components/motion/MotionProvider";
 import { SiteChrome } from "@/components/layout/SiteChrome";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
+import "./visual-refinements.css";
 
 export const metadata: Metadata = {
   ...(siteUrl ? { metadataBase: siteUrl } : {}),

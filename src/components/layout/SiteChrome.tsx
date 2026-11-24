@@ -6,6 +6,7 @@ import { Header } from "./Header";
 import { FloatingDock } from "@/components/navigation/FloatingDock";
 import { CommandPalette } from "@/components/navigation/CommandPalette";
 import { sections } from "@/lib/portfolio";
+import { CustomCursor } from "@/components/motion/CustomCursor";
 
 export function SiteChrome() {
   const pathname = usePathname();
@@ -49,5 +50,5 @@ export function SiteChrome() {
     return () => { cancelAnimationFrame(frame); observer.disconnect(); window.removeEventListener("scroll", schedule); window.removeEventListener("resize", schedule); };
   }, [pathname]);
   const current = pathname.startsWith("/projects") ? "archive" : pathname.startsWith("/research") ? "research" : active;
-  return <><div className="scroll-progress" ref={progress} aria-hidden="true" /><Header key={pathname} active={current} scrolled={scrolled || pathname !== "/"} onSearch={show} /><FloatingDock activeLabel={sections.find((section) => section.id === current)?.label ?? "Intro"} visible={scrolled || pathname !== "/"} onSearch={show} /><CommandPalette key={session} open={open} onClose={close} /></>;
+  return <><CustomCursor key={`cursor:${pathname}`} suspended={open} /><div className="scroll-progress" ref={progress} aria-hidden="true" /><Header key={pathname} active={current} scrolled={scrolled || pathname !== "/"} onSearch={show} /><FloatingDock activeLabel={sections.find((section) => section.id === current)?.label ?? "Intro"} visible={scrolled || pathname !== "/"} onSearch={show} /><CommandPalette key={session} open={open} onClose={close} /></>;
 }
