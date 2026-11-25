@@ -1,4 +1,4 @@
-# Shakil Mahmud — Interactive V2 portfolio
+# Shakil Mahmud — Interactive V3 portfolio
 
 An original dark portfolio built in the existing Next.js App Router project with TypeScript, Tailwind CSS, Motion, and the supplied public content. The approved reference is in `reference/`; it is not embedded in the app.
 
@@ -26,7 +26,8 @@ The route check defaults to `http://127.0.0.1:3000`; `PORTFOLIO_TEST_URL` select
 ## Content and release
 
 - Public facts: `src/content/portfolio.ts`.
-- Nine case studies: `/projects/[slug]`; six research notes: `/research/[slug]`.
+- Eleven project case studies at `/projects/[slug]` and six research notes at `/research/[slug]`. FGAP lives in the research archive.
+- Career pathways, skill categories, training and academic coursework are defined alongside the projects in the typed content file. Quick Find links directly into the directories.
 - All project artwork is explicitly illustrative. The portrait is the supplied public photograph.
 - A résumé download appears only after a reviewed public PDF is supplied and configured.
 - Set `NEXT_PUBLIC_SITE_URL` to the approved HTTP(S) origin before an approved public release. Missing configuration keeps pages non-indexable and omits canonicals and absolute social-image URLs. The social artwork itself is available at `/og`.

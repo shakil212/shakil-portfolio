@@ -35,8 +35,16 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
     // Close synchronously before routing so the destination is no longer inert.
     dialog.current?.close();
     onClose();
-    router.push(href);
-    if (href.startsWith("/#") && window.location.pathname === "/") requestAnimationFrame(() => document.getElementById(href.slice(2))?.focus({ preventScroll: true }));
+    if (href.startsWith("/#") && location.pathname === "/") {
+      const hash = href.slice(1);
+      if (location.hash !== hash) location.hash = hash;
+      else window.dispatchEvent(new Event("portfolio-reveal"));
+      const target = document.getElementById(hash.slice(1));
+      target?.focus({ preventScroll: true });
+      target?.scrollIntoView({ block: "start" });
+    } else {
+      router.push(href);
+    }
   };
   const onKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.nativeEvent.isComposing) return;
@@ -52,7 +60,7 @@ export function CommandPalette({ open, onClose }: { open: boolean; onClose: () =
     else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
   }} onCancel={(event) => { event.preventDefault(); onClose(); }} onClick={(event) => { if (event.target === event.currentTarget) { const rect = event.currentTarget.getBoundingClientRect(); if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) onClose(); } }}>
     <div className="command-head"><h2 id="command-title">Quick navigation</h2><button onClick={onClose} aria-label="Close Quick Find">Esc <X size={12} /></button></div>
-    <label className="command-input"><Search size={20} aria-hidden="true" /><span className="sr-only">Search sections, projects and research</span><input ref={input} value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} onKeyDown={onKeyDown} placeholder="Jump to a section or search projects…" role="combobox" aria-expanded={open} aria-autocomplete="list" aria-controls="command-results" aria-activedescendant={results.length ? `command-result-${selected}` : undefined} autoComplete="off" /></label>
+    <label className="command-input"><Search size={20} aria-hidden="true" /><span className="sr-only">Search careers, skills, courses, projects and research</span><input ref={input} value={query} onChange={(event) => { setQuery(event.target.value); setActive(0); }} onKeyDown={onKeyDown} placeholder="Search careers, skills, courses or projects…" role="combobox" aria-expanded={open} aria-autocomplete="list" aria-controls="command-results" aria-activedescendant={results.length ? `command-result-${selected}` : undefined} autoComplete="off" /></label>
     <div className="command-results" id="command-results" role="listbox" aria-label="Quick navigation results">{results.map((item, index) => <div role="option" id={`command-result-${index}`} aria-selected={selected === index} key={item.href} className="command-option" onPointerMove={() => setActive(index)} onClick={() => activate(item.href)}><span className="command-index">{String(index + 1).padStart(2, "0")}</span><span className="command-name">{item.label}</span><span className="command-tag">{item.tag}</span><ArrowUpRight size={17} /></div>)}</div>
     {!results.length && <p className="command-empty" role="status">No matches. Try “Python”, “CareerPath”, or “research”.</p>}
     {results.length > 0 && <p className="sr-only" role="status">{results.length} navigation result{results.length === 1 ? "" : "s"} available.</p>}

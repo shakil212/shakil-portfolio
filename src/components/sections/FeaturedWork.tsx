@@ -51,12 +51,15 @@ export function FeaturedWork() {
         <div className="chapter-jumps" role="group" aria-label="Jump between featured projects">{featuredProjects.map((item, index) => {
           const number = String(index + 1).padStart(2, "0");
           const label = index === 0 ? "CareerPath" : index === 1 ? "MOT-SSL-GRU" : "Automation";
-          return <a key={item.slug} href={`#feature-${item.slug}`} aria-current={active === index ? "step" : undefined} aria-label={`${number} ${label}: jump to ${item.title}`} onClick={() => setActive(index)}><span>{number}</span><span className="chapter-label">{label}</span></a>;
+          return <a key={item.slug} href={`#feature-${item.slug}`} aria-current={active === index ? "step" : undefined} aria-label={`${number} ${label}: jump to ${item.title}`} onClick={() => setActive(index)}><span>{number}</span>{" "}<span className="chapter-label">{label}</span></a>;
         })}</div>
         <p className="featured-hint mono">↓ Scroll through selected work · Select a project</p>
       </aside>
       <div>{featuredProjects.map((item, index) => <article className="showcase-item" id={`feature-${item.slug}`} data-feature={index} key={item.slug}>
-        <Reveal><Link className="art-link" data-cursor="view" href={`/projects/${item.slug}`} aria-label={`Read ${item.title} case study`}><ProjectArtwork project={item} number={index + 1} /></Link></Reveal>
+        <Reveal><div className="art-link">
+          <ProjectArtwork project={item} number={index + 1} />
+          <Link className="art-hit-area" data-cursor="view" href={`/projects/${item.slug}`} aria-label={`Read ${item.title} case study`} />
+        </div></Reveal>
         <div className="work-caption"><div><h3><Link href={`/projects/${item.slug}`}>{item.title}</Link></h3><p><span>{item.kind}</span><span className="caption-stage">{item.status}</span></p></div><Link className="round-link" href={`/projects/${item.slug}`} aria-label={`Read ${item.title}`}><ArrowUpRight size={20} /></Link></div>
         {item.limitations && <p className="project-qualification">{item.limitations}</p>}
       </article>)}</div>

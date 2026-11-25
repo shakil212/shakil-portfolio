@@ -4,12 +4,18 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { Header } from "./Header";
 import { FloatingDock } from "@/components/navigation/FloatingDock";
-import { CommandPalette } from "@/components/navigation/CommandPalette";
+import dynamic from "next/dynamic";
 import { sections } from "@/lib/portfolio";
-import { CustomCursor } from "@/components/motion/CustomCursor";
+import { finePointerQuery, useMediaQuery } from "@/components/motion/useMediaQuery";
+import { useMotionPreference } from "@/components/motion/MotionProvider";
+
+const CommandPalette = dynamic(() => import("@/components/navigation/CommandPalette").then((module) => module.CommandPalette));
+const CustomCursor = dynamic(() => import("@/components/motion/CustomCursor").then((module) => module.CustomCursor));
 
 export function SiteChrome() {
   const pathname = usePathname();
+  const { effectsEnabled } = useMotionPreference();
+  const cursorEligible = useMediaQuery(`(min-width: 768px) and ${finePointerQuery}`);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState("top");
   const [scrolled, setScrolled] = useState(false);
@@ -50,5 +56,5 @@ export function SiteChrome() {
     return () => { cancelAnimationFrame(frame); observer.disconnect(); window.removeEventListener("scroll", schedule); window.removeEventListener("resize", schedule); };
   }, [pathname]);
   const current = pathname.startsWith("/projects") ? "archive" : pathname.startsWith("/research") ? "research" : active;
-  return <><CustomCursor key={`cursor:${pathname}`} suspended={open} /><div className="scroll-progress" ref={progress} aria-hidden="true" /><Header key={pathname} active={current} scrolled={scrolled || pathname !== "/"} onSearch={show} /><FloatingDock activeLabel={sections.find((section) => section.id === current)?.label ?? "Intro"} visible={scrolled || pathname !== "/"} onSearch={show} /><CommandPalette key={session} open={open} onClose={close} /></>;
+  return <>{effectsEnabled && cursorEligible && !open && <CustomCursor key={pathname} />}<div className="scroll-progress" ref={progress} aria-hidden="true" /><Header key={pathname} active={current} scrolled={scrolled || pathname !== "/"} onSearch={show} /><FloatingDock activeLabel={sections.find((section) => section.id === current)?.label ?? "Intro"} visible={scrolled || pathname !== "/"} onSearch={show} />{open && <CommandPalette key={session} open={open} onClose={close} />}</>;
 }

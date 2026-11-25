@@ -2,16 +2,8 @@
 
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
-import { useMotionPreference } from "./MotionProvider";
-import { finePointerQuery, useMediaQuery } from "./useMediaQuery";
 
-export function CustomCursor({ suspended = false }: { suspended?: boolean }) {
-  const { effectsEnabled } = useMotionPreference();
-  const finePointer = useMediaQuery(`(min-width: 768px) and ${finePointerQuery}`);
-  return effectsEnabled && finePointer && !suspended ? <CursorLayer /> : null;
-}
-
-function CursorLayer() {
+export function CustomCursor() {
   const layer = useRef<HTMLDivElement>(null);
   const dot = useRef<HTMLDivElement>(null);
   const ring = useRef<HTMLDivElement>(null);

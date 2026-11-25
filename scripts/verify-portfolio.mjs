@@ -8,7 +8,7 @@ const { parse } = require("next/dist/compiled/node-html-parser");
 const content = loadTypeScript("../src/content/portfolio.ts");
 const data = loadTypeScript("../src/lib/portfolio.ts", { "@/content/portfolio": content });
 const { projects, research, searchProjects, categories, sections } = data;
-const { commandEntries, searchCommands } = loadTypeScript("../src/lib/commands.ts", { "./portfolio": data });
+const { commandEntries, searchCommands } = loadTypeScript("../src/lib/commands.ts", { "./portfolio": data, "@/content/portfolio": content });
 const { motionIsEnabled, featuredRootMargin } = loadTypeScript("../src/lib/interactions.ts");
 const siteUrlModule = loadTypeScript("../src/lib/site-url.ts");
 const base = process.env.PORTFOLIO_TEST_URL ?? "http://127.0.0.1:3000";
@@ -35,14 +35,17 @@ try {
   assert.equal(page.twitter.title, page.openGraph.title);
   assert.equal(page.twitter.images[0].url, `${fixtureOrigin}/og`);
   const sitemap = loadTypeScript("../src/app/sitemap.ts", { "@/lib/portfolio": data, "@/lib/metadata": metadata }).default();
-  assert.equal(sitemap.length, 18);
+  assert.equal(sitemap.length, 3 + projects.length + research.length);
   assert.ok(sitemap.every((item) => item.url.startsWith(fixtureOrigin)));
 } finally {
   if (originalOrigin === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
   else process.env.NEXT_PUBLIC_SITE_URL = originalOrigin;
 }
 
-assert.equal(projects.length, 9);
+assert.equal(projects.length, 11);
+assert.equal(research.length, 6);
+assert.equal(research.filter((item) => item.slug.startsWith("fgap-")).length, 1);
+assert.equal(content.portfolio.contact.instagram, "https://www.instagram.com/shakil__735/");
 assert.equal(new Set(projects.map((project) => project.slug)).size, projects.length);
 assert.equal(new Set(research.map((item) => item.slug)).size, research.length);
 assert.equal(searchProjects("").length, projects.length);
@@ -56,9 +59,27 @@ for (const category of categories.slice(1)) {
   assert.deepEqual(searchProjects("", category), expected);
   assert.ok(expected.length > 0);
 }
-assert.equal(commandEntries.length, 21);
+const expectedCourses = [
+  "Structured Programming Language", "Data Structure and Algorithms", "Object-Oriented Programming",
+  "Artificial Intelligence", "Machine Learning", "Data Mining", "Digital Image Processing",
+  "Software Engineering", "System Analysis and Design", "Human-Computer Interaction",
+  "Database Management System", "Operating System", "Computer Network", "Computer Security", "Project Management",
+];
+assert.deepEqual(content.courseGroups.flatMap((group) => group.courses), expectedCourses);
+assert.equal(content.courseGroups.length, 5);
+assert.equal(content.careerFocus.length, 6);
+assert.equal(content.skillGroups.length, 14);
+assert.equal(content.learningGroups.length, 5);
+for (const course of expectedCourses) assert.equal(searchCommands(course)[0].label, course);
+for (const pathway of content.careerFocus) {
+  const filtered = searchProjects("", "All", pathway.id);
+  assert.ok(filtered.length && filtered.every((project) => project.careers.includes(pathway.id)));
+}
+assert.deepEqual(searchProjects("training", "Systems Design", "people").map((p) => p.slug), ["corporate-training-skill-evaluation"]);
+assert.equal(searchProjects("training", "Hardware & IoT", "people").length, 0);
+for (const term of ["Excel", "MIS", "Office", "HR", "CV Screening", "CodeAlpha", "Kaggle", "Working proficiency"]) assert.ok(searchCommands(term).length);
 assert.equal(new Set(commandEntries.map((entry) => entry.href)).size, commandEntries.length);
-assert.equal(searchCommands("  ").length, 21);
+assert.equal(searchCommands("  ").length, commandEntries.length);
 assert.ok(searchCommands("careerpath").some((entry) => entry.href === "/projects/careerpath-ai"));
 assert.ok(searchCommands("22 interviews").some((entry) => entry.href.includes("prompted-not-taught")));
 assert.equal(searchCommands("not-a-real-project").length, 0);
@@ -119,6 +140,13 @@ for (const path of paths) {
   responses.set(path, html);
 }
 const home = responses.get("/");
+for (const command of commandEntries) {
+  const url = new URL(command.href, base);
+  const document = documents.get(url.pathname);
+  assert.ok(document, command.href);
+  if (url.hash) assert.ok(document.getElementById(url.hash.slice(1)), command.href);
+}
+for (const name of expectedCourses) assert.equal(documents.get("/").getElementById(data.courseAnchor(name))?.textContent, name);
 for (const section of sections) assert.ok(home.includes(`id="${section.id}"`), `Home section: ${section.id}`);
 for (const project of projects) {
   assert.ok(home.includes(`/projects/${project.slug}`), `Home case-study link: ${project.slug}`);
@@ -201,7 +229,7 @@ for (const path of assetPaths) {
     assert.match(robots, /Allow: \//);
     assert.ok(robots.includes(new URL("/sitemap.xml", expectedOrigin).href));
   }
-  if (path === "/sitemap.xml") assert.equal(((await response.text()).match(/<loc>/g) ?? []).length, expectedOrigin ? 18 : 0);
+  if (path === "/sitemap.xml") assert.equal(((await response.text()).match(/<loc>/g) ?? []).length, expectedOrigin ? paths.length : 0);
 }
 for (const path of ["/projects/does-not-exist", "/research/does-not-exist", "/does-not-exist"]) {
   const response = await request(path);

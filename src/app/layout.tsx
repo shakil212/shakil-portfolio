@@ -6,11 +6,13 @@ import { SiteChrome } from "@/components/layout/SiteChrome";
 import { Footer } from "@/components/layout/Footer";
 import "./globals.css";
 import "./visual-refinements.css";
+import "./professional-profile.css";
 
 export const metadata: Metadata = {
   ...(siteUrl ? { metadataBase: siteUrl } : {}),
-  title: { default: "Shakil Mahmud — Software, Data & Research", template: "%s | Shakil Mahmud" },
+  title: { default: portfolio.identity.siteTitle, template: "%s | Shakil Mahmud" },
   description: portfolio.identity.introduction,
+  keywords: ["Software Engineering", "Artificial Intelligence", "Machine Learning", "Data Analysis", "MIS and Reporting", "UI/UX Design", "Business Operations", "Corporate Opportunities", "Research and Innovation"],
   applicationName: "Shakil Mahmud Portfolio",
   authors: [{ name: portfolio.identity.name }],
   robots: siteUrl ? { index: true, follow: true } : { index: false, follow: false },
